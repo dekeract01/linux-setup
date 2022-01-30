@@ -1,0 +1,107 @@
+{
+    "workbench.startupEditor": "none",
+    "workbench.editor.untitled.hint": "hidden",
+    "editor.acceptSuggestionOnCommitCharacter": false,
+    "editor.acceptSuggestionOnEnter": "off",
+    "editor.wordBasedSuggestions": false,
+    "editor.snippetSuggestions": "none",
+    "editor.suggestOnTriggerCharacters": false,
+    "editor.quickSuggestions": {
+        "other": false,
+        "comments": false,
+        "strings": false
+    },
+    "editor.autoClosingBrackets": "never",
+    "editor.autoClosingOvertype": "never",
+    "editor.autoClosingQuotes": "never",
+    "editor.renderWhitespace": "all",
+    "editor.rulers": [80],
+    "editor.suggest.showClasses": false,
+    "editor.suggest.showFolders": false,
+    "editor.suggest.showEvents": false,
+    "editor.suggest.showIssues": false,
+    "editor.suggest.showKeywords": false,
+    "editor.suggest.showMethods": false,
+    "editor.suggest.showModules": false,
+    "editor.suggest.showOperators": false,
+    "editor.suggest.showProperties": false,
+    "editor.suggest.showReferences": false,
+    "editor.suggest.showSnippets": false,
+    "editor.suggest.showStructs": false,
+    "editor.suggest.showTypeParameters": false,
+    "editor.suggest.showUnits": false,
+    "editor.suggest.showUsers": false,
+    "editor.suggest.showValues": false,
+    "editor.suggest.showVariables": false,
+    "editor.suggest.showWords": false,
+    "editor.suggest.snippetsPreventQuickSuggestions": false,
+    "editor.suggest.filterGraceful": false,
+    "editor.detectIndentation": false,
+    "editor.insertSpaces": true,
+    "editor.tabSize": 4,
+    "terminal.integrated.profiles.windows": {
+        "PowerShell": {
+            "path": "C:\\Program Files\\PowerShell\\7\\pwsh.exe",
+            "args": ["-NoLogo"]
+        },
+        "Command Prompt": {
+            "path": "C:\\Windows\\System32\\cmd.exe",
+            "args": []
+        }
+    },
+    "terminal.integrated.defaultProfile.windows": "PowerShell",
+    "terminal.external.windowsExec": "C:\\Program Files\\PowerShell\\7\\pwsh.exe",
+    "less.completion.triggerPropertyValueCompletion": false,
+    "css.completion.triggerPropertyValueCompletion": false,
+    "scss.completion.completePropertyWithSemicolon": false,
+    "php.suggest.basic": false,
+    "scss.completion.triggerPropertyValueCompletion": false,
+    "javascript.suggest.autoImports": false,
+    "javascript.suggest.paths": false,
+    "javascript.suggest.completeJSDocs": false,
+    "html.suggest.html5": false,
+    "javascript.suggest.names": false,
+    "[c]": {
+        "editor.detectIndentation": false,
+        "editor.insertSpaces": false,
+        "editor.tabSize": 4
+    },
+    "[cpp]": {
+        "editor.detectIndentation": false,
+        "editor.insertSpaces": false,
+        "editor.tabSize": 4
+    },
+    "[csharp]": {
+        "editor.detectIndentation": false,
+        "editor.insertSpaces": false,
+        "editor.tabSize": 4
+    },
+    "[latex]": {
+        "editor.detectIndentation": false,
+        "editor.insertSpaces": true,
+        "editor.tabSize": 4
+    },
+    "[bibtex]": {
+        "editor.detectIndentation": false,
+        "editor.insertSpaces": true,
+        "editor.tabSize": 4
+    },
+    "[doctex]": {
+        "editor.detectIndentation": false,
+        "editor.insertSpaces": true,
+        "editor.tabSize": 4
+    },
+    "[tex]": {
+        "editor.detectIndentation": false,
+        "editor.insertSpaces": true,
+        "editor.tabSize": 4
+    },
+    "[tsv]": {
+        "editor.detectIndentation": false,
+        "editor.insertSpaces": false,
+        "editor.tabSize": 4
+    },
+    "extensions.ignoreRecommendations": true,
+    "extensions.autoUpdate": false
+}
+

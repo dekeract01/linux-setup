@@ -94,9 +94,8 @@ if [ "${run_step[$step]}" = true ]; then
     sudo apt install
     
     # install network tools
-    sudo apt install net-tools NetworkManager-openvpn NetworkManager-vpnc
+    sudo apt install net-tools openvpn vpnc
 fi
-
 
 # remove bloat -------------------------------------------------------------------
 step=3
