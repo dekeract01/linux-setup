@@ -25,13 +25,15 @@ run_step[3]=false        # remove bloat
 run_step[4]=false        # install clamav
 run_step[5]=false        # configure firewalld
 run_setp[6]=false        # install and configure git
-run_step[7]=false        # install software and media codecs from apt repositories
-run_step[8]=false        # install Network Manager plugins
+run_step[7]=false        # install flatpak
+run_step[8]=false        # install visual studio code
+run_step[9]=false        # install syncthing
+run_step[10]=false       # install and configure ssh
 
 
 # run configure step
 if ["configure" = false]; then
-    printf "\nConfigure this script first before running \n\n\n"
+    printf "\nconfigure this script first before running \n\n\n"
     exit
 fi
 
@@ -61,7 +63,7 @@ sudo apt upgrade
 # create and remove directories ----------------------------------------------------
 step=1
 if [ "${run_step[$step]}" = true]; then
-    printf "\n ------------------------ Step $step. create/remove directories ------------------------\n\n"
+    printf "\n ------------------------ step $step. create/remove directories ------------------------\n\n"
     
     if [ -d "$HOME/bin" ]; then
         rm -rf "$HOME/bin"
@@ -84,7 +86,7 @@ fi
 # install basic software and utilities ---------------------------------------------
 step=2
 if [ "${run_step[$step]}" = true ]; then
-    printf "\n ------------------------ Step $step. install general software and utilities ------------------------\n\n"
+    printf "\n ------------------------ step $step. install general software and utilities ------------------------\n\n"
     
     sudo apt install neofetch htop zip exfat-utils fuse-exfat
     sudo apt install filezilla MozillaThunderbird octave
@@ -100,7 +102,7 @@ fi
 # remove bloat -------------------------------------------------------------------
 step=3
 if [ "${run_step[$step]}" = true ]; then
-    printf "\n ------------------------ Step $step. removing bloat ------------------------\n\n"
+    printf "\n ------------------------ step $step. removing bloat ------------------------\n\n"
     
     sudo apt remove -y cheese cheese-lang
     sudo apt remove -y brasero brasero-lang brasero-nautilus libbrasero-burn3-1 libbrasero-media3-1 libbrasero-utils3-1
@@ -115,7 +117,7 @@ fi
 # install clamAV -------------------------------------------------------------------
 step=4
 if [ "${run_step[$step]}" = true ]; then
-    printf "\n ------------------------ Step $step. installing clamav ------------------------\n\n"
+    printf "\n ------------------------ step $step. installing clamav ------------------------\n\n"
     
     sudo apt install clamav clamav-daemon
     
@@ -137,7 +139,7 @@ fi
 # configure firewall ---------------------------------------------------------------
 step=5
 if [ "${run_step[$step]}" = true ]; then
-    printf "\n ------------------------ Step $step. installing firewalld ------------------------\n\n"
+    printf "\n ------------------------ step $step. installing firewalld ------------------------\n\n"
     
     # install firewall (if doens't exist), the default firewall for ubuntu is ufw
     sudo apt install firewalld
@@ -155,7 +157,7 @@ fi
 # install and configure git --------------------------------------------------------
 step=6
 if [ "${run_step[$step]}" = true ]; then
-    printf "\n ------------------------ Step $step. installing and configuring git ------------------------\n\n"
+    printf "\n ------------------------ step $step. installing and configuring git ------------------------\n\n"
     
     # installing git
     sudo apt install git
@@ -167,17 +169,82 @@ if [ "${run_step[$step]}" = true ]; then
 fi
 
 
-# install and configure git -------------------------------------------------------------------
+# install flatpack -------------------------------------------------------------------
 step=7
 if [ "${run_step[$step]}" = true ]; then
-    printf "\n ------------------------ Step $step. installing and configuring git ------------------------\n\n"
+    printf "\n ------------------------ step $step. (reboot required) installing flatpack ------------------------\n\n"
     
-    # installing git
-    sudo apt install git
+    # installing flatpack
+    sudo apt install flatpak gnome-software-plugin-flatpak gnome-software
     
-    # configure git
-    git config --global user.name "$git_user_name"
-    git config --global user.email "$git_user_email"
-    git config --global core.editor nano
+    # add to remote repository
+    flatpak remote-add --if-not-exists flathub https://flathub.org/repo/flathub.flatpakrepo
+    
+    reboot_required=true
+    
 fi
+
+# install and configure visual studio code -------------------------------------------------------------------
+step=8
+if [ "${run_step[$step]}" = true ]; then
+    printf "\n ------------------------ step $step. installing and configuring visual studio code ------------------------\n\n"
+    
+    # install visual studio code, instructions: https://code.visualstudio.com/docs/setup/linux
+    wget -qO- https://packages.microsoft.com/keys/microsoft.asc | gpg --dearmor > packages.microsoft.gpg
+    sudo install -o root -g root -m 644 packages.microsoft.gpg /etc/apt/trusted.gpg.d/
+    sudo sh -c 'echo "deb [arch=amd64,arm64,armhf signed-by=/etc/apt/trusted.gpg.d/packages.microsoft.gpg] https://packages.microsoft.com/repos/code stable main" > /etc/apt/sources.list.d/vscode.list'
+    rm -f packages.microsoft.gpg
+    
+    sudo apt install apt-transport-https
+    sudo apt update
+    
+    # install visual studio code
+    sudo apt install code # or code-insiders
+    
+    # configure visual studio
+    
+    if [ -f "$HOME/.config/Code/User/settings.json" ]; then
+        rm -f "$HOME/.config/Code/User/settings.json"
+    fi
+    
+    wget -P "$HOME/.config/Code/User" "https://gitlab.com/mjrhudson/matss-setup-and-config-files/-/raw/master/vscode/settings.json"
+    
+fi
+
+
+# install and configure ssh -------------------------------------------------------------------
+step=10
+if [ "${run_step[$step]}" = true ]; then
+    printf "\n ------------------------ step $step. installing and configuring ssh + sshd ------------------------\n\n"
+    
+    # add syncthing to apt repository
+    sudo apt install openssh-server
+    
+    sudo systemctl enable ssh
+    sudo systemctl start ssh
+    
+    # generate ssh keys
+    ssh-keygen -t ed25519 -a 100 -f "$HOME/.ssh/id_ed25519" -C "$USER@$HOSTNAME"
+    ssh-keygen -t ed25519 -a 100 -f "$HOME/.ssh/git_ed25519" -C "$USER@$HOSTNAME"
+    
+    if [ -f "$HOME/.ssh/config" ]; then
+        rm -f "$HOME/.ssh/config"
+    fi
+    
+    wget -P "$HOME/.ssh" "https://gitlab.com/mjrhudson/matt-setup-and-config-files/-/raw/master/linux/ssh/config"
+    
+    chmod 600 "$HOME/.ssh/config"
+    
+    
+    # configure sshd
+    # set custom ssh port to use
+    sudo sed -i "s/^\<Port .*\>/Port $ssh_port/g" "/etc/ssh/ssh_config"
+    sudo sed -i "s/^#\<Port .*\>/Port $ssh_port/g" "/etc/ssh/ssh_config"
+    
+    # enable public key authentication
+    
+    
+fi
+
+
 
