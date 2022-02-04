@@ -29,6 +29,9 @@ run_step[7]=false        # install flatpak
 run_step[8]=false        # install visual studio code
 run_step[9]=false        # install syncthing
 run_step[10]=false       # install and configure ssh
+run_step[11]=false       # install and configure nvidia drivers
+
+# Utilities
 
 
 # run configure step
@@ -91,9 +94,10 @@ if [ "${run_step[$step]}" = true ]; then
     sudo apt install neofetch htop zip exfat-utils fuse-exfat
     sudo apt install filezilla MozillaThunderbird octave
     sudo apt install build-essential gfortran gcc
-    sudo apt install locate
+    sudo apt install locate hwinfo
     
-    sudo apt install
+    # install hdf5 tools
+    sudo apt install hdf5-tools
     
     # install network tools
     sudo apt install net-tools openvpn vpnc
@@ -112,6 +116,9 @@ if [ "${run_step[$step]}" = true ]; then
     sudo apt remove -y mutt mutt-doc mutt-lang
     sudo apt remove -y polari polari-lang typelib-1_0-Polari-1_0
     sudo apt remove -y gnome-shell-search-provider-gnome-weather gnome-weather gnome-weather-lang
+    
+    # uninstall all games
+    sudo apt purge aisleriot gnome-sudoku mahjongg ace-of-penguins gnomine gbrainy
 fi
 
 # install clamAV -------------------------------------------------------------------
@@ -211,13 +218,39 @@ if [ "${run_step[$step]}" = true ]; then
     
 fi
 
+# install and configure ssh -------------------------------------------------------------------
+step=9
+if [ "${run_step[$step]}" = true ]; then
+    printf "\n ------------------------ step $step. installing and configuring syncthing ------------------------\n\n"
+    
+    # add syncthing to apt repos
+    echo "deb https://apt.syncthing.net/ syncthing stable" | sudo tee /etc/apt/sources.list.d/syncthing.list
+    
+    # add syncthing pgp keys
+    curl -s https://syncthing.net/release-key.txt | sudo apt-key add -
+    
+    # update apt database
+    sudo apt update
+    
+    # install syncthing
+    sudo apt install syncthing
+    
+    # enable syncthing service
+    sudo systemctl enable syncthing@$USER.service
+    
+    # start syncthing
+    sudo systemctl start syncthing@$USER.service
+    
+    # check syncthing adn add further automation
+fi
+
 
 # install and configure ssh -------------------------------------------------------------------
 step=10
 if [ "${run_step[$step]}" = true ]; then
     printf "\n ------------------------ step $step. installing and configuring ssh + sshd ------------------------\n\n"
     
-    # add syncthing to apt repository
+    #  install ssh
     sudo apt install openssh-server
     
     sudo systemctl enable ssh
@@ -242,9 +275,104 @@ if [ "${run_step[$step]}" = true ]; then
     sudo sed -i "s/^#\<Port .*\>/Port $ssh_port/g" "/etc/ssh/ssh_config"
     
     # enable public key authentication
+    sudo sed -i "s/^\<PubkeyAuthentication .*\>/PubkeyAuthentication yes/g" "/etc/ssh/ssh_config"
+    sudo sed -i "s/^#\<PubkeyAuthentication .*\>/PubkeyAuthentication yes/g" "/etc/ssh/sshd_config"
     
+    # disable password authentication
+    sudo sed -i "s/^\<PasswordAuthentication .*\>/PasswordAuthentication no/g" "/etc/ssh/sshd_config"
+    sudo sed -i "s/^#\<PasswordAuthentication .*\>/PasswordAuthentication no/g" "/etc/ssh/sshd_config"
     
+    # allow custom ssh port through firewall
+    sudo firewall-cmd --permanent --new-service="ssh-$ssh_port"
+    sudo firewall-cmd --permanent --service="ssh-$ssh_port" --set-description="SSH service on port $ssh_port"
+    sudo firewall-cmd --permanent --service="ssh-$ssh_port" --add-port="$ssh_port/tcp"
+    sudo firewall-cmd --permanent --zone="$home_zone_name" --add-service="ssh-$ssh_port"
+    sudo firewall-cmd --reload
+    
+    # start sshd service
+    sudo systemctl enable sshd
+    sudo systemctl start sshd
+
 fi
+
+
+# install and configure nvidia -------------------------------------------------------------------
+step=11
+if [ "${run_step[$step]}" = true ]; then
+    
+    
+    if sudo hwinfo --gfxcard | grep -iF "model" | grep -iqF "nvidia"; then
+        nvidia_detected=true
+        echo "nvidia detected, installing nvidia drivers"
+    else
+        nvidia_detected=false
+        echo "the computer is not equiped with an nvidia driver, process terminated."
+    fi
+    
+    if [ "$nvidia_detected" = true ]; then
+            printf "\n ------------------------ step $step. installing and configuring nvidia drivers ------------------------\n\n"
+            sudo apt udpate
+            sudo apt upgrade
+            
+            # sudo apt install nvidia-driver-390*
+            # sudo apt install nvidia-driver-460*
+            
+            # reboot_required=true
+            
+            # install cuda dependencies
+            # sudo apt install libcuda* libnvidia*
+            
+            # install cuda drivers
+            # sudo apt install nvidia-profiler nvidia-cuda-dev nvidia-visual-profiler
+            # sudo apt install nvidia-cuda-toolkit
+            
+            # sudo apt-get install linux-headers-$(uname -r)
+            
+            # cuda toolkit 11.6
+            # wget https://developer.download.nvidia.com/compute/cuda/repos/ubuntu2004/x86_64/cuda-ubuntu2004.pin
+            # sudo mv cuda-ubuntu2004.pin /etc/apt/preferences.d/cuda-repository-pin-600
+            # sudo apt-key adv --fetch-keys https://developer.download.nvidia.com/compute/cuda/repos/ubuntu2004/x86_64/7fa2af80.pub
+            
+            # sudo add-apt-repository "deb https://developer.download.nvidia.com/compute/cuda/repos/ubuntu2004/x86_64/ /"
+            
+            # sudo apt-get update
+            
+            # install cuda
+            sudo apt clean
+            sudo apt update
+            sudo apt remove nvidia-*
+            
+            sudo apt install cuda nvidia-cuda-toolkit
+            
+            
+            # verify the system has cuda compatible hardware
+            lspci | grep -i nvidia
+            
+            # verify linux version
+            uname -m && cat /etc/*release
+            
+            # install kernal headers
+            sudo apt-get install linux-headers-$(uname -r)
+            
+            
+            
+            # install cuda drivers
+            wget https://developer.download.nvidia.com/compute/cuda/repos/ubuntu2004/x86_64/cuda-ubuntu2004.pin
+            
+            sudo mv cuda-ubuntu2004.pin /etc/apt/preferences.d/cuda-repository-pin-600
+            
+            wget https://developer.download.nvidia.com/compute/cuda/11.6.0/local_installers/cuda-repo-ubuntu2004-11-6-local_11.6.0-510.39.01-1_amd64.deb
+            
+            sudo dpkg -i cuda-repo-ubuntu2004-11-6-local_11.6.0-510.39.01-1_amd64.deb
+            
+            sudo apt-key add /var/cuda-repo-ubuntu2004-11-6-local/7fa2af80.pub
+            
+            sudo apt-get update
+            
+            
+    fi
+fi
+
 
 
 
