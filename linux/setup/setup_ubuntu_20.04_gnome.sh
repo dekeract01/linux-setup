@@ -311,30 +311,7 @@ if [ "${run_step[$step]}" = true ]; then
     
     if [ "$nvidia_detected" = true ]; then
             printf "\n ------------------------ step $step. installing and configuring nvidia drivers ------------------------\n\n"
-            sudo apt udpate
-            sudo apt upgrade
-            
-            # sudo apt install nvidia-driver-390*
-            # sudo apt install nvidia-driver-460*
-            
-            # reboot_required=true
-            
-            # install cuda dependencies
-            # sudo apt install libcuda* libnvidia*
-            
-            # install cuda drivers
-            # sudo apt install nvidia-profiler nvidia-cuda-dev nvidia-visual-profiler
-            # sudo apt install nvidia-cuda-toolkit
-            
-            # sudo apt-get install linux-headers-$(uname -r)
-            
-            # cuda toolkit 11.6
-            # wget https://developer.download.nvidia.com/compute/cuda/repos/ubuntu2004/x86_64/cuda-ubuntu2004.pin
-            # sudo mv cuda-ubuntu2004.pin /etc/apt/preferences.d/cuda-repository-pin-600
-            # sudo apt-key adv --fetch-keys https://developer.download.nvidia.com/compute/cuda/repos/ubuntu2004/x86_64/7fa2af80.pub
-            
-            # sudo add-apt-repository "deb https://developer.download.nvidia.com/compute/cuda/repos/ubuntu2004/x86_64/ /"
-            
+
             # sudo apt-get update
             
             # install cuda
@@ -342,7 +319,7 @@ if [ "${run_step[$step]}" = true ]; then
             sudo apt update
             sudo apt remove nvidia-*
             
-            sudo apt install cuda nvidia-cuda-toolkit
+            
             
             
             # verify the system has cuda compatible hardware
@@ -369,6 +346,9 @@ if [ "${run_step[$step]}" = true ]; then
             
             sudo apt-get update
             
+            sudo apt-get -y install cuda
+            
+            sudo apt install cuda nvidia-cuda-toolkit
             
     fi
 fi
