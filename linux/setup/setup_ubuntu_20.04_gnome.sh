@@ -1,7 +1,7 @@
-#!bin/bash
+#!/bin/bash
 # ----------------------------------------------------------------------------------
 # setup_ubuntu_20.04.3_gnome.sh
-#
+#  works for afm machine.
 #
 #
 # author. gnsa1e21
@@ -14,7 +14,6 @@
 #  until this is done.
 configure=false
 # ----------------------------------------------------------------------------------
-
 
 # configure run steps
 # set these to either true or false depending on which steps you want to run
