@@ -3,7 +3,7 @@
     "workbench.editor.untitled.hint": "hidden",
     "editor.acceptSuggestionOnCommitCharacter": false,
     "editor.acceptSuggestionOnEnter": "off",
-    "editor.wordBasedSuggestions": false,
+    "editor.wordBasedSuggestions": "off",
     "editor.snippetSuggestions": "none",
     "editor.suggestOnTriggerCharacters": false,
     "editor.quickSuggestions": {

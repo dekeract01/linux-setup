@@ -1,0 +1,4 @@
+# vscode extensions installed by the vscode step, one id per line
+ms-vscode.cpptools
+ms-python.python
+james-yu.latex-workshop
