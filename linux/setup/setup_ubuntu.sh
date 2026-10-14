@@ -11,7 +11,6 @@
 #
 # author. dekeract01
 # date created. 29.01.2022
-# inspired by matt's setup files: https://gitlab.com/mjrhudson/matts-setup-and-config-files
 # ------------------------------------------------------------------------------
 set -Eeuo pipefail
 source "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/../../lib/common.sh"

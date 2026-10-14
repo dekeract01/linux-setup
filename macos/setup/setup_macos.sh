@@ -8,7 +8,6 @@
 #  ./setup_macos.sh --list       list the steps
 #
 # author. dekeract01
-# inspired by matt's setup files: https://gitlab.com/mjrhudson/matts-setup-and-config-files
 # ------------------------------------------------------------------------------
 set -Eeuo pipefail
 source "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/../../lib/common.sh"
